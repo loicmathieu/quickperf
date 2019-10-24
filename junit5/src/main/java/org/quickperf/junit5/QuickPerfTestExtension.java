@@ -56,10 +56,22 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
     public void interceptTestMethod(Invocation<Void> invocation,
                                     ReflectiveInvocationContext<Method> invocationContext,
                                     ExtensionContext extensionContext) throws Throwable {
+        List<RecordablePerformance> perfRecordersToExecuteBeforeTestMethod = testExecutionContext.getPerfRecordersToExecuteBeforeTestMethod();
+        List<RecordablePerformance> perfRecordersToExecuteAfterTestMethod = testExecutionContext.getPerfRecordersToExecuteAfterTestMethod();
+
         // FIXME use a system property to avoid recursive forking
         boolean inAFork = "true".equals(System.getProperty("quickPerfInAFork", "false"));
-        if(inAFork){
-            invocation.proceed();
+        if(inAFork) {
+            if (!testExecutionContext.isQuickPerfDisabled()) {
+                startRecording(perfRecordersToExecuteBeforeTestMethod);
+            }
+            try {
+                invocation.proceed();
+            } finally {
+                if (!testExecutionContext.isQuickPerfDisabled()) {
+                    stopRecording(perfRecordersToExecuteAfterTestMethod);
+                }
+            }
             return;
         }
 
@@ -68,35 +80,32 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
         boolean forkDisabled = quickPerfTest != null && quickPerfTest.disableFork();
         if (testExecutionContext.testExecutionUsesTwoJVMs()) {
             if (forkDisabled) {
-                System.out.println("[QUICK PERF] WARNING forking is explicitly disabled, this can cause inconcistent results");
+                System.out.println("[QUICK PERF] WARNING forking is explicitly disabled, this can cause inconsistent results.");
+                        System.out.println("[QUICK PERF] The following system properties should has been used on the forked VM: " +
+                                testExecutionContext.getJvmOptions().asStrings(testExecutionContext.getWorkingFolder()));
             } else {
-                System.out.println("[QUICK PERF] INFO forking the VM, it is done later on JUnit5 and can cause issues on your test, " +
-                        "if it occurs you can use '@QuickPerfTest(disableFork = true)' to disable forking");
+                System.out.println("[QUICK PERF] INFO forking the VM you can use '@QuickPerfTest(disableFork = true)' to disable forking");
             }
         }
 
         Throwable businessThrowable = null;
-        List<RecordablePerformance> perfRecordersToExecuteBeforeTestMethod = testExecutionContext.getPerfRecordersToExecuteBeforeTestMethod();
-        List<RecordablePerformance> perfRecordersToExecuteAfterTestMethod = testExecutionContext.getPerfRecordersToExecuteAfterTestMethod();
-
 
         if (testExecutionContext.testExecutionUsesTwoJVMs() && !forkDisabled) {
-            if(testExecutionContext.isQuickPerfDisabled()){
-                startRecording(perfRecordersToExecuteBeforeTestMethod);
-            }
             newJvmTestLauncher.run( invocationContext.getExecutable()
                     , testExecutionContext.getWorkingFolder()
                     , testExecutionContext.getJvmOptions()
                     , QuickPerfJunit5Core.class);
-            if(testExecutionContext.isQuickPerfDisabled()){
-                stopRecording(perfRecordersToExecuteAfterTestMethod);
-            }
+
+            //FIXME we need to invoke it here and in the fork because Junit check that the invocation was proceed
+            // this causes double invocation of the test !!!
+            invocation.proceed();
+
             WorkingFolder workingFolder = testExecutionContext.getWorkingFolder();
             businessThrowable = jUnit5FailuresRepository.find(workingFolder);
         }
         else {
             try{
-                if(testExecutionContext.isQuickPerfDisabled()){
+                if(!testExecutionContext.isQuickPerfDisabled()){
                     startRecording(perfRecordersToExecuteBeforeTestMethod);
                 }
                 invocation.proceed();
@@ -105,7 +114,7 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
                 businessThrowable = throwable;
             }
             finally {
-                if(testExecutionContext.isQuickPerfDisabled()){
+                if(!testExecutionContext.isQuickPerfDisabled()){
                     stopRecording(perfRecordersToExecuteAfterTestMethod);
                 }
             }
