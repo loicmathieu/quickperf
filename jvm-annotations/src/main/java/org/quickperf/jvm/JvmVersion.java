@@ -13,20 +13,39 @@
 
 package org.quickperf.jvm;
 
-public class JvmVersion {
+public enum JvmVersion {
+
+    JAVA7, JAVA8, JAVA9, JAVA10, JAVA11, JAVA12, JAVA13, UNKNOWN;
 
     private static final String JAVA_VM_SPECIFICATION_VERSION_PROPERTY = "java.vm.specification.version";
+    private static final String JVM_VERSION_AS_STRING = System.getProperty(JAVA_VM_SPECIFICATION_VERSION_PROPERTY);
 
-    private JvmVersion() { }
+    public static JvmVersion getCurrentJavaVersion(){
+        if(JVM_VERSION_AS_STRING.contains("1.7")){
+            return JAVA7;
+        }
+        if(JVM_VERSION_AS_STRING.contains("1.8")){
+            return JAVA8;
+        }
+        int jvmVersion = findJvmVersionAsInt();
+        switch (jvmVersion){
+            case 9: return JAVA9;
+            case 10: return JAVA10;
+            case 11: return JAVA11;
+            case 12: return JAVA12;
+            case 13: return JAVA13;
+            default: return UNKNOWN;
+        }
+    }
+
+
 
     public static boolean is7() {
-        String jvmVersionAsString = System.getProperty(JAVA_VM_SPECIFICATION_VERSION_PROPERTY);
-        return jvmVersionAsString.contains("1.7");
+        return JVM_VERSION_AS_STRING.contains("1.7");
     }
 
     public static boolean is8() {
-        String jvmVersionAsString = System.getProperty(JAVA_VM_SPECIFICATION_VERSION_PROPERTY);
-        return jvmVersionAsString.contains("1.8");
+        return JVM_VERSION_AS_STRING.contains("1.8");
     }
 
     public static boolean isGreaterThanOrEqualTo9() {
@@ -37,8 +56,14 @@ public class JvmVersion {
     }
 
     private static int findJvmVersionAsInt() {
-        String jvmVersionAsString = System.getProperty(JAVA_VM_SPECIFICATION_VERSION_PROPERTY);
-        return Integer.parseInt(jvmVersionAsString);
+        return Integer.parseInt(JVM_VERSION_AS_STRING);
+    }
+
+    public static boolean isGreaterThan8(){
+        if (is7() || is8()) {
+            return false;
+        }
+        return true;
     }
 
     public static boolean isGreaterThanOrEqualTo11() {

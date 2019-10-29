@@ -81,7 +81,7 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
         if (testExecutionContext.testExecutionUsesTwoJVMs()) {
             if (forkDisabled) {
                 System.out.println("[QUICK PERF] WARNING forking is explicitly disabled, this can cause inconsistent results.");
-                        System.out.println("[QUICK PERF] The following system properties should has been used on the forked VM: " +
+                System.out.println("[QUICK PERF] The following system properties should has been used on the forked VM: " +
                                 testExecutionContext.getJvmOptions().asStrings(testExecutionContext.getWorkingFolder()));
             } else {
                 System.out.println("[QUICK PERF] INFO forking the VM you can use '@QuickPerfTest(disableFork = true)' to disable forking");
@@ -118,6 +118,11 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
                     stopRecording(perfRecordersToExecuteAfterTestMethod);
                 }
             }
+        }
+
+        //FIXME why didn't the ConsoleReporter nor JUnit shows the throwable ?
+        if(businessThrowable != null){
+            businessThrowable.printStackTrace();
         }
 
         SetOfAnnotationConfigs testAnnotationConfigs = quickPerfConfigs.getTestAnnotationConfigs();
