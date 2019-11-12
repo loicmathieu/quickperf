@@ -103,16 +103,20 @@ public class JvmAnnotationBuilder {
         };
     }
 
-    public static MeasureRSS measureRSS(){
+    public static MeasureRSS measureRSS(final boolean forkJvm){
         return  new MeasureRSS() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return MeasureRSS.class;
             }
+            @Override
+            public boolean forkJvm() {
+                return forkJvm;
+            }
         };
     }
 
-    public static ExpectRSS expectRSS(final int value, final AllocationUnit unit) {
+    public static ExpectRSS expectRSS(final int value, final AllocationUnit unit, final boolean forkJvm) {
         return new ExpectRSS() {
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -126,6 +130,11 @@ public class JvmAnnotationBuilder {
             public AllocationUnit unit() {
                 return unit;
             }
+            @Override
+            public boolean forkJvm() {
+                return forkJvm;
+            }
+
         };
     }
 

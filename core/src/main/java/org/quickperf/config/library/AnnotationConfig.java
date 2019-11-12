@@ -16,6 +16,7 @@ package org.quickperf.config.library;
 import org.quickperf.ExtractablePerformanceMeasure;
 import org.quickperf.issue.VerifiablePerformanceIssue;
 import org.quickperf.perfrecording.RecordablePerformance;
+import org.quickperf.testlauncher.AnnotationToJvmForkSkipper;
 import org.quickperf.testlauncher.AnnotationToJvmOptionConverter;
 
 import java.lang.annotation.Annotation;
@@ -37,6 +38,8 @@ public class AnnotationConfig {
     private Class<? extends Annotation> classOfAnnotationToDisable;
 
     private AnnotationToJvmOptionConverter annotationToJvmOptionConverter;
+
+    private AnnotationToJvmForkSkipper annotationToJvmForkSkipper;
 
     public Class<? extends Annotation> getClazz() {
         return clazz;
@@ -62,6 +65,10 @@ public class AnnotationConfig {
         return annotationToJvmOptionConverter;
     }
 
+    AnnotationToJvmForkSkipper getAnnotationToJvmForkSkipper() {
+        return annotationToJvmForkSkipper;
+    }
+
     Class<? extends Annotation> getClassOfAnnotationToDisable() {
         return classOfAnnotationToDisable;
     }
@@ -80,6 +87,8 @@ public class AnnotationConfig {
                 = AnnotationToJvmOptionConverter.NONE;
 
         private ExtractablePerformanceMeasure perfMeasureExtractor;
+
+        private AnnotationToJvmForkSkipper annotationToJvmForkSkipper;
 
         public Builder perfRecorderClass(Class<? extends RecordablePerformance> recordablePerformance) {
             this.perfRecorderClass = recordablePerformance;
@@ -108,6 +117,11 @@ public class AnnotationConfig {
             return this;
         }
 
+        public Builder testHasToBeLaunchedInASpecificJvm(AnnotationToJvmForkSkipper annotationToJvmForkSkipper) {
+            this.annotationToJvmForkSkipper = annotationToJvmForkSkipper;
+            return this;
+        }
+
         public Builder cancelBehaviorOf(Class<? extends Annotation> annotationToDisable) {
             this.classOfAnnotationToDisable = annotationToDisable;
             return this;
@@ -131,6 +145,7 @@ public class AnnotationConfig {
             annotationConfig.testHasToBeLaunchedInASpecificJvm = testHasToBeLaunchedInASpecificJvm;
             annotationConfig.annotationToJvmOptionConverter = annotationToJvmOptionConverter;
             annotationConfig.classOfAnnotationToDisable = classOfAnnotationToDisable;
+            annotationConfig.annotationToJvmForkSkipper = annotationToJvmForkSkipper;
             return annotationConfig;
         }
 

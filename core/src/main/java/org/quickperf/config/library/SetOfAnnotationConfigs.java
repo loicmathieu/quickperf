@@ -18,6 +18,7 @@ import org.quickperf.issue.VerifiablePerformanceIssue;
 import org.quickperf.annotation.DisableQuickPerf;
 import org.quickperf.perfrecording.RecordablePerformance;
 import org.quickperf.testlauncher.AllJvmOptions;
+import org.quickperf.testlauncher.AnnotationToJvmForkSkipper;
 import org.quickperf.testlauncher.AnnotationToJvmOptionConverter;
 import org.quickperf.testlauncher.JvmOption;
 
@@ -35,6 +36,8 @@ public class SetOfAnnotationConfigs {
     private final Map<Class<? extends Annotation>, Boolean> hasTestToBeLaunchedInASpecificJvmByAnnotationClass = new HashMap<>();
 
     private final Map<Class<? extends Annotation>, AnnotationToJvmOptionConverter> annotationToJvmParamConverterByAnnotationClass = new HashMap<>();
+
+    private final Map<Class<? extends Annotation>, AnnotationToJvmForkSkipper> annotationToJvmForkSkipperByAnnotationClass = new HashMap<>();
 
     private final Map<Class<? extends Annotation>, Class<? extends Annotation>> classOfAnnotationToDisableByAnnotationClass = new HashMap<>();
 
@@ -66,6 +69,9 @@ public class SetOfAnnotationConfigs {
 
         AnnotationToJvmOptionConverter annotationToJvmOptionConverter = annotationConfig.getAnnotationToJvmOptionConverter();
         annotationToJvmParamConverterByAnnotationClass.put(annotationClass, annotationToJvmOptionConverter);
+
+        AnnotationToJvmForkSkipper annotationToJvmForkSkipper =  annotationConfig.getAnnotationToJvmForkSkipper();
+        annotationToJvmForkSkipperByAnnotationClass.put(annotationClass, annotationToJvmForkSkipper);
 
     }
 
@@ -129,7 +135,12 @@ public class SetOfAnnotationConfigs {
     private boolean hasTestMethodToBeLaunchedInASpecificJvmWith(Annotation annotation) {
         Class<? extends Annotation> clazz = annotation.annotationType();
         Boolean testInNewJvm = hasTestToBeLaunchedInASpecificJvmByAnnotationClass.get(clazz);
-        return testInNewJvm == null ? false : testInNewJvm;
+        boolean forkJvm = testInNewJvm == null ? false : testInNewJvm;
+        AnnotationToJvmForkSkipper annotationToJvmForkSkipper = annotationToJvmForkSkipperByAnnotationClass.get(clazz);
+        if(annotationToJvmForkSkipper != null){
+            forkJvm = !annotationToJvmForkSkipper.disableFork(annotation);
+        }
+        return forkJvm;
     }
 
     public List<Annotation> removeDisabledAndAndDisablingAnnotationsIn(Collection<Annotation> annotations) {

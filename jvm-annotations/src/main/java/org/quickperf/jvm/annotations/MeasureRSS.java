@@ -21,4 +21,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface MeasureRSS {
+
+    /**
+     * Whether or not to Fork the JVM to measure the RSS only for the test execution.
+     * By default, QuickPerf will fork the JVM so the RSS will be measured only for your test method.
+     *
+     * Some use case con take advantage of not forking to globally measure the RSS of the Test class,
+     * taken into account the following part of the test execution:
+     * - Global initilizer (static block, @BeforeAll or @BeforeClass annotated methods)
+     * - Other extension that "starts an application" for integration testing (Spring or Quarkus test support)
+     */
+    boolean forkJvm() default true;
 }

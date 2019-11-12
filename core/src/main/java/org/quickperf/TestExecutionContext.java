@@ -64,7 +64,6 @@ public class TestExecutionContext {
         AnnotationsExtractor annotationsExtractor = AnnotationsExtractor.INSTANCE;
 
         Annotation[] perfAnnotations = annotationsExtractor.extractAnnotationsFor(testMethod, testAnnotationConfigs);
-        boolean isTestMethodToBeLaunchedInASpecificJvm = true;
 
         int runnerAllocationOffset = 0;
         TestExecutionContext testExecutionContext = buildFrom(quickPerfConfigs

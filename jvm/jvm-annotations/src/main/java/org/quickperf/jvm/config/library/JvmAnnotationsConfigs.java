@@ -101,13 +101,13 @@ class JvmAnnotationsConfigs {
     static final AnnotationConfig DISPLAY_RSS_FROM_PROCESS_STATUS = new AnnotationConfig.Builder()
             .perfRecorderClass(ProcessStatusRecorder.class)
             .perfIssueVerifier(MeasureRssPerfVerifier.INSTANCE)
-            .testHasToBeLaunchedInASpecificJvm()
+            .testHasToBeLaunchedInASpecificJvm(MeasureRssToJvmForkSkipper.INSTANCE)
             .build(MeasureRSS.class);
 
     static final AnnotationConfig MAX_RSS_FROM_PROCESS_STATUS = new AnnotationConfig.Builder()
             .perfRecorderClass(ProcessStatusRecorder.class)
             .perfIssueVerifier(ExpectRssPerfVerifier.INSTANCE)
-            .testHasToBeLaunchedInASpecificJvm()
+            .testHasToBeLaunchedInASpecificJvm(ExpectRssToJvmForkSkipper.INSTANCE)
             .build(ExpectRSS.class);
 
 }
