@@ -29,8 +29,6 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMetho
 public class QuickPerfJunit5Core {
 
     public static void main(String... args) {
-        System.setProperty("quickPerfInAFork", "true");//FIXME avoid recursive forking
-
         String className = args[0];
         String methodName = args[1];
         String workingFolderPath = args[2];

@@ -59,14 +59,15 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
         List<RecordablePerformance> perfRecordersToExecuteBeforeTestMethod = testExecutionContext.getPerfRecordersToExecuteBeforeTestMethod();
         List<RecordablePerformance> perfRecordersToExecuteAfterTestMethod = testExecutionContext.getPerfRecordersToExecuteAfterTestMethod();
 
-        // FIXME use a system property to avoid recursive forking
-        boolean inAFork = "true".equals(System.getProperty("quickPerfInAFork", "false"));
-        if(inAFork) {
+        if(SystemProperties.TEST_CODE_EXECUTING_IN_NEW_JVM.evaluate()) {
             if (!testExecutionContext.isQuickPerfDisabled()) {
                 startRecording(perfRecordersToExecuteBeforeTestMethod);
             }
             try {
                 invocation.proceed();
+                //FIXME call directly the test, this needs to allow to skip the invocation (see bellow)
+                //invocationContext.getExecutable().invoke(invocationContext.getArguments());
+                //invocation.skip();
             } finally {
                 if (!testExecutionContext.isQuickPerfDisabled()) {
                     stopRecording(perfRecordersToExecuteAfterTestMethod);
@@ -75,22 +76,8 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
             return;
         }
 
-        //retrieve the quickperf annotation and log about JVM forking
-        QuickPerfTest quickPerfTest = invocationContext.getExecutable().getDeclaringClass().getDeclaredAnnotation(QuickPerfTest.class);
-        boolean forkDisabled = quickPerfTest != null && quickPerfTest.disableFork();
-        if (testExecutionContext.testExecutionUsesTwoJVMs()) {
-            if (forkDisabled) {
-                System.out.println("[QUICK PERF] WARNING forking is explicitly disabled, this can cause inconsistent results.");
-                System.out.println("[QUICK PERF] The following system properties should has been used on the forked VM: " +
-                                testExecutionContext.getJvmOptions().asStrings(testExecutionContext.getWorkingFolder()));
-            } else {
-                System.out.println("[QUICK PERF] INFO forking the VM you can use '@QuickPerfTest(disableFork = true)' to disable forking");
-            }
-        }
-
         Throwable businessThrowable = null;
-
-        if (testExecutionContext.testExecutionUsesTwoJVMs() && !forkDisabled) {
+        if (testExecutionContext.testExecutionUsesTwoJVMs()) {
             newJvmTestLauncher.run( invocationContext.getExecutable()
                     , testExecutionContext.getWorkingFolder()
                     , testExecutionContext.getJvmOptions()
@@ -98,6 +85,8 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
 
             //FIXME we need to invoke it here and in the fork because Junit check that the invocation was proceed
             // this causes double invocation of the test !!!
+            // this should be fixed in JUnit 5.6 that will provides a way to skip an invocation: https://github.com/junit-team/junit5/pull/2090
+            //invocation.skip();
             invocation.proceed();
 
             WorkingFolder workingFolder = testExecutionContext.getWorkingFolder();
