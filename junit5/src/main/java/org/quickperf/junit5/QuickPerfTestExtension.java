@@ -109,11 +109,6 @@ public class QuickPerfTestExtension implements BeforeEachCallback, InvocationInt
             }
         }
 
-        //FIXME why didn't the ConsoleReporter nor JUnit shows the throwable ?
-        if(businessThrowable != null){
-            businessThrowable.printStackTrace();
-        }
-
         SetOfAnnotationConfigs testAnnotationConfigs = quickPerfConfigs.getTestAnnotationConfigs();
         Collection<PerfIssuesToFormat> groupOfPerfIssuesToFormat = perfIssuesEvaluator.evaluatePerfIssues(testAnnotationConfigs, testExecutionContext, RetrievableFailure.NONE);
 
