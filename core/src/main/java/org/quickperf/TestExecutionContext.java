@@ -70,8 +70,8 @@ public class TestExecutionContext {
         TestExecutionContext testExecutionContext = buildFrom(quickPerfConfigs
                                                             , testAnnotationConfigs
                                                             , perfAnnotations
-                                                            , isTestMethodToBeLaunchedInASpecificJvm
-                                                            , runnerAllocationOffset);
+                                                            , true
+                                                            , jUnitVersion);
 
 
         if(testExecutionContext.jvmOptions == null) {

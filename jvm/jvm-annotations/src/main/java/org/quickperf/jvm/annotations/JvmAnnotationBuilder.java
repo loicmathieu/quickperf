@@ -103,6 +103,32 @@ public class JvmAnnotationBuilder {
         };
     }
 
+    public static MeasureRSS measureRSS(){
+        return  new MeasureRSS() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return MeasureRSS.class;
+            }
+        };
+    }
+
+    public static ExpectRSS expectRSS(final int value, final AllocationUnit unit) {
+        return new ExpectRSS() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return ExpectRSS.class;
+            }
+            @Override
+            public double value() {
+                return value;
+            }
+            @Override
+            public AllocationUnit unit() {
+                return unit;
+            }
+        };
+    }
+
     public static ExpectNoHeapAllocation expectNoHeapAllocation() {
         return new ExpectNoHeapAllocation() {
             @Override
