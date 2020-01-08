@@ -12,16 +12,33 @@ import org.quickperf.jvm.annotations.MeasureRSS;
 
 import java.util.Locale;
 
+import static org.junit.Assume.assumeFalse;
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 public class JUnit4RssTests {
 
     @Before
-    public void notWindows() {
+    public void before() {
+        notWindows();
+        notMacOS();
+    }
+
+    private void notWindows() {
+        String osName = extractOSNameInLowerCase();
+        boolean onWindows = osName.contains("win");
+        assumeFalse(onWindows);
+    }
+
+    private String extractOSNameInLowerCase() {
         String osName = System.getProperty("os.name");
         osName = osName.toLowerCase(Locale.ENGLISH);
-        boolean onWindows = osName.contains("win");
-        org.junit.Assume.assumeFalse(onWindows);
+        return osName;
+    }
+
+    private void notMacOS() {
+        String osName = extractOSNameInLowerCase();
+        boolean onMac = osName.contains("mac");
+        assumeFalse(onMac);
     }
 
     @RunWith(QuickPerfJUnitRunner.class)
