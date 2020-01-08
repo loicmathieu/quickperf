@@ -23,10 +23,10 @@ import org.quickperf.jvm.annotations.ExpectRSS;
 public class ExpectRssPerfVerifier implements VerifiablePerformanceIssue<ExpectRSS, ProcessStatus> {
 
     public static final VerifiablePerformanceIssue INSTANCE = new ExpectRssPerfVerifier();
+
     private final ByteAllocationMeasureFormatter byteAllocationMeasureFormatter = ByteAllocationMeasureFormatter.INSTANCE;
 
-    private ExpectRssPerfVerifier() {
-    }
+    private ExpectRssPerfVerifier() { }
 
     @Override
     public PerfIssue verifyPerfIssue(ExpectRSS annotation, ProcessStatus processStatus) {
@@ -37,7 +37,7 @@ public class ExpectRssPerfVerifier implements VerifiablePerformanceIssue<ExpectR
         if (maxExpectedRss.isLessThan(measuredRss)) {
 
             String assertionMessage =
-                    "Expected RSS to be less than "
+                              "Expected RSS to be less than "
                             + byteAllocationMeasureFormatter.format(maxExpectedRss)
                             + " but is " + byteAllocationMeasureFormatter.format(measuredRss) + ".";
             String description = assertionMessage + System.lineSeparator() + measuredRss.getComment();
