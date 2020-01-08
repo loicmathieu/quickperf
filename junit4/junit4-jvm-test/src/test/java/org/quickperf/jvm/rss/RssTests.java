@@ -6,14 +6,8 @@ import org.junit.experimental.results.PrintableResult;
 import org.junit.runner.RunWith;
 import org.quickperf.junit4.QuickPerfJUnitRunner;
 import org.quickperf.jvm.allocation.AllocationUnit;
-import org.quickperf.jvm.annotations.ExpectNoJvmIssue;
 import org.quickperf.jvm.annotations.ExpectRSS;
-import org.quickperf.jvm.annotations.HeapSize;
 import org.quickperf.jvm.annotations.MeasureRSS;
-import org.quickperf.jvm.jmc.JmcTests;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.experimental.results.PrintableResult.testResult;
 
@@ -44,7 +38,7 @@ public class RssTests {
     rss_measure_expecting_10m() {
 
         // GIVEN
-        Class<?> testClass = RssTests.ClassWithRssAnnotations.class;
+        Class<?> testClass = ClassWithRssAnnotations.class;
 
         // WHEN
         PrintableResult printableResult = testResult(testClass);
@@ -62,7 +56,7 @@ public class RssTests {
     rss_measure_no_fork_expecting_10m() {
 
         // GIVEN
-        Class<?> testClass = RssTests.ClassWithRssAnnotationsNoFork.class;
+        Class<?> testClass = ClassWithRssAnnotationsNoFork.class;
 
         // WHEN
         PrintableResult printableResult = testResult(testClass);

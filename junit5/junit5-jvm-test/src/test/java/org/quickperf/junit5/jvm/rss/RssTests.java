@@ -42,7 +42,7 @@ public class RssTests {
     rss_measure_expecting_10m() {
 
         // GIVEN
-        Class<?> testClass = RssTests.ClassWithRssAnnotations.class;
+        Class<?> testClass = ClassWithRssAnnotations.class;
 
         // WHEN
         TestExecutionSummary printableResult = testResult(testClass);
@@ -60,7 +60,7 @@ public class RssTests {
     rss_measure_no_fork_expecting_10m() {
 
         // GIVEN
-        Class<?> testClass = RssTests.ClassWithRssAnnotationsNoFork.class;
+        Class<?> testClass = ClassWithRssAnnotationsNoFork.class;
 
         // WHEN
         TestExecutionSummary printableResult = testResult(testClass);

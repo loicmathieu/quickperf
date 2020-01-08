@@ -1,7 +1,7 @@
 package org.quickperf.jvm.rss;
 
-import org.quickperf.PerfIssue;
-import org.quickperf.VerifiablePerformanceIssue;
+import org.quickperf.issue.PerfIssue;
+import org.quickperf.issue.VerifiablePerformanceIssue;
 import org.quickperf.jvm.allocation.Allocation;
 import org.quickperf.jvm.allocation.AllocationUnit;
 import org.quickperf.jvm.allocation.ByteAllocationMeasureFormatter;

@@ -1,7 +1,7 @@
 package org.quickperf.jvm.rss;
 
-import org.quickperf.PerfIssue;
-import org.quickperf.VerifiablePerformanceIssue;
+import org.quickperf.issue.PerfIssue;
+import org.quickperf.issue.VerifiablePerformanceIssue;
 import org.quickperf.jvm.annotations.MeasureRSS;
 
 public class MeasureRssPerfVerifier implements VerifiablePerformanceIssue<MeasureRSS, ProcessStatus> {
