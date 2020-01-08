@@ -14,7 +14,8 @@ import java.util.Locale;
 
 import static org.junit.experimental.results.PrintableResult.testResult;
 
-public class RssTests {
+public class JUnit4RssTests {
+
     @Before
     public void notWindows() {
         String osName = System.getProperty("os.name");
