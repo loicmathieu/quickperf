@@ -1,6 +1,7 @@
 package org.quickperf.jvm.rss;
 
 import org.assertj.core.api.SoftAssertions;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.results.PrintableResult;
 import org.junit.runner.RunWith;
@@ -9,9 +10,19 @@ import org.quickperf.jvm.allocation.AllocationUnit;
 import org.quickperf.jvm.annotations.ExpectRSS;
 import org.quickperf.jvm.annotations.MeasureRSS;
 
+import java.util.Locale;
+
 import static org.junit.experimental.results.PrintableResult.testResult;
 
 public class RssTests {
+    @Before
+    public void notWindows() {
+        String osName = System.getProperty("os.name");
+        osName = osName.toLowerCase(Locale.ENGLISH);
+        boolean onWindows = osName.contains("win");
+        org.junit.Assume.assumeFalse(onWindows);
+    }
+
     @RunWith(QuickPerfJUnitRunner.class)
     public static class ClassWithRssAnnotations {
 

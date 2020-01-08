@@ -1,7 +1,10 @@
 package org.quickperf.junit5.jvm.rss;
 
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -15,6 +18,7 @@ import org.quickperf.jvm.annotations.MeasureRSS;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
+@DisabledOnOs(OS.WINDOWS)
 public class RssTests {
     @QuickPerfTest
     public static class ClassWithRssAnnotations {
